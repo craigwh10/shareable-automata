@@ -23,12 +23,14 @@ export default function Home() {
     return firstEqual && secondEqual;
   }
 
+  const fullReset = () => {
+    window.location.href =  window.location.href.split("?")[0];
+  }
+
   const reset = () => {
-    console.log('initial sttate', typeof window !== 'undefined')
     if (typeof window !== 'undefined') {
       const base64InitialState = window?.location?.search.split('?pattern=')[1];
 
-      console.log('base64', base64InitialState);
       if (!base64InitialState) {
         document.querySelectorAll('[data-testid^="pixel-"]').forEach((node) => {
           node.setAttribute('class', 'automata-grid-element');
@@ -118,7 +120,7 @@ export default function Home() {
       <main className='main'>
         <div>
           <button onClick={togglePlaying} disabled={playing}>Play</button>
-          <button onClick={reset}>Reset</button>
+          <button onClick={fullReset}>Clear</button>
           <button onClick={() => {
             copyLink(`${window.location.protocol}//${window.location.host}?pattern=${btoa(JSON.stringify(initialGrid)).toString()}`)
           }}>Copy share link</button>
