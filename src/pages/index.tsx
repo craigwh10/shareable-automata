@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react';
 import { AutomataGrid, conwaysGameOfLifePreset } from 'cellular-automata-react'
 
-import pako from 'pako';
+import { compression } from './compression';
 
 export default function Home() {
   const [initialGrid, setInitialGrid] = useState<Array<Array<number>>>([]);
@@ -20,26 +20,7 @@ export default function Home() {
     });
   }
   
-  const deflateString = (data: number[][]) => {
-    const stringifiedData = JSON.stringify(data);
-    const inputArray = new TextEncoder().encode(stringifiedData);
 
-    const res = pako.deflateRaw(inputArray);
-    const buffer = Buffer.from(res);
-    return buffer.toString('base64');
-  }
-
-  const inflateString = (string: string) => {
-    const gzipped = atob(string);
-    const decodedArrayBuffer = Uint8Array.from((gzipped), c => c.charCodeAt(0)).buffer;
-
-    const inflatedUint8Array = pako.inflateRaw(decodedArrayBuffer);
-    const inflatedString = new TextDecoder().decode(inflatedUint8Array);
-  
-    const inflatedData = JSON.parse(inflatedString) as number[][];
-  
-    return inflatedData;
-  }
 
   const hasCoordinate = (coordArray: number[]) => (coord: number[]) => {
     const firstEqual = coord[0] === coordArray[0];
@@ -72,7 +53,7 @@ export default function Home() {
       }
 
       if (pattern) {
-        const asJS = inflateString(pattern)
+        const asJS = compression.inflateString(pattern)
         asJS.forEach((item: number[]) => {
           const pixel = document.querySelector(`[data-testid="pixel-x${item[0]}-y${[1]}"]`);
           if (pixel) {
@@ -100,12 +81,10 @@ export default function Home() {
             const fullTestId = node.attributes.item(0)?.value;
       
             const coordinates = fullTestId?.split('-') as string[];
-            console.log(coordinates)
             const xN = coordinates[1];
             const yN = coordinates[2];
             const coordArray = [Number(xN.replace('x', '')), Number(yN.replace('y', ''))];
       
-            console.log(coordArray);
             setInitialGrid((prevState) => {
                 if (!prevState.find(hasCoordinate(coordArray))) {
                   node.setAttribute('class', 'automata-grid-element automata-grid-element-alive');
@@ -201,12 +180,12 @@ export default function Home() {
                 backgroundColor: sendWithAutoPlay ? 'green' : 'red',
                 border: 0
               }}>Share with autoplay</button>
-              <button onClick={() => {
+              <button data-testid="copy-link-btn" onClick={() => {
                 copyLink(
                   `${window.location.protocol}//${window.location.host}?withAutoplay=${
                     sendWithAutoPlay
                   }&pattern=${
-                    deflateString(initialGrid)
+                    compression.deflateString(initialGrid)
                   }`)
               }}>Copy share link</button>
           </div>

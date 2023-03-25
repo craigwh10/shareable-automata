@@ -1,0 +1,14 @@
+/** @type {import('ts-jest').JestConfigWithTsJest} */
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'jsdom',
+  setupFilesAfterEnv: ['@testing-library/jest-dom/extend-expect', '<rootDir>/setup.ts'],
+  moduleNameMapper: {
+    '\\.(css|less)$': 'identity-obj-proxy'
+  },
+  globals: {
+    'ts-jest': {
+      tsConfig: 'tsconfig.jest.json'
+    }
+  }
+};
