@@ -191,7 +191,7 @@ export default function Home() {
                   }`)
               }}>Copy share link</button>
           </div>
-          <p>Clicking "copy share link" gives you a link you can paste and send to friends.</p>
+          <p>Clicking &quot;copy share link&quot; gives you a link you can paste and send to friends.</p>
         </div>}
         {!loading && <div className='footer'>
           <a href="https://craigwh.it" target='_blank'>Made by craigwh.it</a>
