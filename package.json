@@ -16,6 +16,7 @@
     "cellular-automata-react": "^1.5.0",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
+    "firebase": "^9.18.0",
     "js-base64": "^3.7.5",
     "next": "13.2.4",
     "pako": "^2.1.0",
