@@ -100,10 +100,12 @@ export default function Home() {
             const fullTestId = node.attributes.item(0)?.value;
       
             const coordinates = fullTestId?.split('-') as string[];
+            console.log(coordinates)
             const xN = coordinates[1];
             const yN = coordinates[2];
-            const coordArray = [Number(xN[1]), Number(yN[1])];
+            const coordArray = [Number(xN.replace('x', '')), Number(yN.replace('y', ''))];
       
+            console.log(coordArray);
             setInitialGrid((prevState) => {
                 if (!prevState.find(hasCoordinate(coordArray))) {
                   node.setAttribute('class', 'automata-grid-element automata-grid-element-alive');
