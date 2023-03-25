@@ -74,6 +74,10 @@ export default function Home() {
   useEffect(() => {
     reset();
 
+    if (!process.env?.AN_APIKEY) {
+      return;
+    }
+
     const firebaseConfig = {
       apiKey: process.env.AN_APIKEY,
       authDomain: "shareable-automata.firebaseapp.com",
