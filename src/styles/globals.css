@@ -2,8 +2,23 @@
   background-color: green !important;
 }
 
+@media (max-width: 700px) {
+  .automata-grid-element-alive.automata-grid-element {
+    width: 15px !important;
+    height: 15px !important;
+  }
+}
+
 .automata-grid-element {
   background-color: red !important;
+
+}
+
+@media (max-width: 700px) {
+  .automata-grid-element {
+    width: 20px !important;
+    height: 20px !important;
+  }
 }
 
 html {
