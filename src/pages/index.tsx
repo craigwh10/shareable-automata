@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react';
 import { AutomataGrid, conwaysGameOfLifePreset } from 'cellular-automata-react'
-import { removeAllListeners } from 'process';
 
 export default function Home() {
   const [initialGrid, setInitialGrid] = useState<Array<Array<number>>>([]);
@@ -18,29 +17,28 @@ export default function Home() {
     });
   }
 
-  const reset = () => {
-    setIsPlaying(false);
-    setLoading(true);
-
-    getInitialStateFromSearch();
-  }
-
   const hasCoordinate = (coordArray: number[]) => (coord: number[]) => {
     const firstEqual = coord[0] === coordArray[0];
     const secondEqual = coord[1] === coordArray[1];
     return firstEqual && secondEqual;
   }
 
-  const getInitialStateFromSearch = () => {
+  const reset = () => {
+    console.log('initial sttate', typeof window !== 'undefined')
     if (typeof window !== 'undefined') {
       const base64InitialState = window?.location?.search.split('?pattern=')[1];
+
+      console.log('base64', base64InitialState);
       if (!base64InitialState) {
-        setInitialGrid([]);
         document.querySelectorAll('[data-testid^="pixel-"]').forEach((node) => {
           node.setAttribute('class', 'automata-grid-element');
         })
+        setIsPlaying(false);
+        setInitialGrid([]);
         setLoading(false);
+        return;
       }
+
       if (base64InitialState) {
         const asJS = JSON.parse(atob(base64InitialState));
         asJS.forEach((item: number[]) => {
@@ -52,41 +50,62 @@ export default function Home() {
         setInitialGrid(JSON.parse(atob(base64InitialState)));
         setLoading(false);
       }
+    
     }
   }
 
   useEffect(() => {
-    getInitialStateFromSearch();
+    reset();
   }, [])
 
-  const clickPixelHandler = (node: Element) => () => {
-      const fullTestId = node.attributes.item(0)?.value;
-
-      const coordinates = fullTestId?.split('-') as string[];
-      const xN = coordinates[1];
-      const yN = coordinates[2];
-      const coordArray = [Number(xN[1]), Number(yN[1])];
-
-      setInitialGrid((prevState) => {
-          if (!prevState.find(hasCoordinate(coordArray))) {
-            node.setAttribute('class', 'automata-grid-element automata-grid-element-alive');
-            return [
-              ...prevState,
-              coordArray
-            ]
-        }
-
-        return prevState;
-      }) // setInitialGrid
-  }
+  let handlersAndNode: any[][] = [];
 
   useEffect(() => {
     if (!loading) {
       document.querySelectorAll('[data-testid^="pixel-"]').forEach((node) => {
-        node.addEventListener('click', clickPixelHandler(node)) // click
+        const clickPixelHandler = () => {
+            const fullTestId = node.attributes.item(0)?.value;
+      
+            const coordinates = fullTestId?.split('-') as string[];
+            const xN = coordinates[1];
+            const yN = coordinates[2];
+            const coordArray = [Number(xN[1]), Number(yN[1])];
+      
+            setInitialGrid((prevState) => {
+                if (!prevState.find(hasCoordinate(coordArray))) {
+                  node.setAttribute('class', 'automata-grid-element automata-grid-element-alive');
+                  return [
+                    ...prevState,
+                    coordArray
+                  ]
+              }
+      
+              return prevState;
+            }) // setInitialGrid
+        }
+
+        // necessary - can't use window, handlers have scope.
+        // node is scope for clickPixel ref
+        handlersAndNode.push([node, clickPixelHandler]);
+
+        node.addEventListener('click', clickPixelHandler) // click
        }) // query
     }
-  }, [loading])
+
+    return () => {
+      handlersAndNode.forEach((handler) => {
+        handler[0].removeEventListener('click', handler[1]);
+      })
+    }
+  }, [loading, playing])
+
+  useEffect(() => {
+    if (playing) {
+      handlersAndNode.forEach((handler) => {
+        handler[0].removeEventListener('click', handler[1]);
+      })
+    }
+  }, [playing])
 
   return (
     <>
@@ -123,7 +142,7 @@ export default function Home() {
             />
           )}
 
-          {!playing && !loading  && (
+          {!playing && !loading && (
             <AutomataGrid
               key={'canvas-grid'}
               pixelsActive={initialGrid as Array<[number, number]>}
