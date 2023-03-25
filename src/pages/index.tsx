@@ -136,7 +136,8 @@ export default function Home() {
             <button onClick={togglePlaying} disabled={playing}>Play automata</button>
             <button onClick={fullReset}>Clear</button>
           </div>
-          <p>Click on red box to set initial pixels.</p>
+          <p>{playing ? 'Click clear to start over and make your own' : 'Click anywhere on red box to make pixels alive.'}</p>
+          <p>{playing ? '' : 'Then you can either share or play an automata'}</p>
         </div>
         <div className='grid-container'>
           {playing && !loading && (
@@ -180,7 +181,7 @@ export default function Home() {
               <button onClick={handleSendAutoPlay} style={{
                 backgroundColor: sendWithAutoPlay ? 'green' : 'red',
                 border: 0
-              }}>Share with autoplay</button>
+              }}>Toggle share with autoplay</button>
               <button data-testid="copy-link-btn" onClick={() => {
                 copyLink(
                   `${window.location.protocol}//${window.location.host}?withAutoplay=${
@@ -190,6 +191,7 @@ export default function Home() {
                   }`)
               }}>Copy share link</button>
           </div>
+          <p>Clicking "copy share link" gives you a link you can paste and send to friends.</p>
         </div>}
         {!loading && <div className='footer'>
           <a href="https://craigwh.it" target='_blank'>Made by craigwh.it</a>
