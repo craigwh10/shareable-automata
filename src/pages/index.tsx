@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react';
 import { AutomataGrid, conwaysGameOfLifePreset } from 'cellular-automata-react'
 
-import { compression } from './compression';
+import { compression } from '../utils/compression';
 
 export default function Home() {
   const [initialGrid, setInitialGrid] = useState<Array<Array<number>>>([]);
