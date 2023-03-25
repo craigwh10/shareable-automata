@@ -10,7 +10,7 @@ describe('compression flow', () => {
 
         expect(returnedData).toEqual(data);
     })
-    test.only('full flow - complex', () => {
+    test('full flow - complex', () => {
         const data = [[1,1], [2,1], [3,4], [4,3], [0,0], [11,12], [44,32], [34,2], [0,1]];
 
         const base64 = compression.deflateString(data);

@@ -3,7 +3,7 @@ import Home from '../pages/index';
 import { compression } from '../utils/compression';
 import React from 'react';
 
-describe('flow', () => {
+describe('general flow', () => {
     Object.assign(navigator, {
         clipboard: {
           writeText: () => {},
@@ -19,7 +19,7 @@ describe('flow', () => {
         render(<Home />);
     })
 
-    it('should return copiable link when clicking 3 pixels and copy link button', async () => {
+    it('should return copyable link when clicking 3 pixels and copy link button', async () => {
         const data = [[1,1], [2,1], [3,4]];
 
         const testIds = data.map((item) => {
@@ -43,7 +43,7 @@ describe('flow', () => {
         })
     })
 
-    it('previously errored case', async () => {
+    it('should run a previously errored case', async () => {
         const data = [[5,7],[4,6],[4,4],[9,4],[10,6],[8,8],[7,6],[6,3],[8,2],[9,2],[13,3],[13,2],[14,1],[14,3],[14,7],[11,8],[12,6],[10,1],[6,0],[3,1],[1,1],[1,6],[1,7],[3,8],[4,8],[3,5],[2,4],[1,3],[2,2],[5,2],[7,1],[12,1],[11,3]];
 
         const testIds = data.map((item) => {
@@ -67,7 +67,7 @@ describe('flow', () => {
         })
     })
 
-    it('should return copiable link when clicking many pixels and copy link button', async () => {
+    it('should return copyble link when clicking many pixels and copy link button', async () => {
         const data = [
             [ 3, 4 ],  [ 2, 4 ],  [ 1, 4 ],  [ 1, 3 ],
             [ 2, 2 ],  [ 3, 1 ],  [ 4, 1 ],  [ 4, 2 ],
