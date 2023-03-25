@@ -74,18 +74,18 @@ export default function Home() {
   useEffect(() => {
     reset();
 
-    if (!process.env?.AN_APIKEY) {
+    if (!process.env?.NEXT_PUBLIC_AN_APIKEY) {
       return;
     }
 
     const firebaseConfig = {
-      apiKey: process.env.AN_APIKEY,
+      apiKey: process.env.NEXT_PUBLIC_AN_APIKEY,
       authDomain: "shareable-automata.firebaseapp.com",
       projectId: "shareable-automata",
       storageBucket: "shareable-automata.appspot.com",
-      messagingSenderId: process.env.AN_MSID,
-      appId: process.env.AN_APPID,
-      measurementId: process.env.AN_MID
+      messagingSenderId: process.env.NEXT_PUBLIC_AN_MSID,
+      appId: process.env.NEXT_PUBLIC_AN_APPID,
+      measurementId: process.env.NEXT_PUBLIC_AN_MID
     };
   
   
