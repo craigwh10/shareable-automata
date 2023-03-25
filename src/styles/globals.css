@@ -27,7 +27,7 @@ main {
 }
 
 .main button {
-  padding: 1em 3em;
+  padding: 1em 2em;
   margin-bottom: 1em;
 }
 
@@ -37,5 +37,42 @@ main {
 }
 
 .grid-container {
+  padding-top: 2em;
+}
+
+p {
+  color: white;
+}
+
+.footer {
+  display: flex;
+  flex-direction: row;
+  margin: auto;
+  gap: 32px;
   padding-top: 4em;
+}
+
+.footer a {
+  color: white;
+}
+
+.button-group {
+  flex-direction: row;
+  display: flex;
+  gap: 8px;
+}
+
+.button-group.button-share {
+  background-color: orange;
+  padding: 1em;
+}
+
+.button-group.button-share button {
+  margin-bottom: 0;
+}
+
+.shareables {
+  margin-top: 2em;
+  margin-left: auto;
+  margin-right: auto;
 }

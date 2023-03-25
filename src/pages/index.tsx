@@ -6,6 +6,7 @@ export default function Home() {
   const [initialGrid, setInitialGrid] = useState<Array<Array<number>>>([]);
   const [loading, setLoading] = useState(true);
   const [playing, setIsPlaying] = useState(false);
+  const [sendWithAutoPlay, setSendWithAutoPlay] = useState(true);
 
   const togglePlaying = () => {
     setIsPlaying((prev) => !prev);
@@ -27,11 +28,18 @@ export default function Home() {
     window.location.href =  window.location.href.split("?")[0];
   }
 
+  const handleSendAutoPlay = () => {
+    setSendWithAutoPlay((autoplay) => !autoplay);
+  }
+
   const reset = () => {
     if (typeof window !== 'undefined') {
-      const base64InitialState = window?.location?.search.split('?pattern=')[1];
+      const params = new URL(document.location.href).searchParams;
+      const pattern = params.get("pattern");
+      const withAutoplay = params.get("withAutoplay");
 
-      if (!base64InitialState) {
+      console.log(pattern, withAutoplay)
+      if (!pattern) {
         document.querySelectorAll('[data-testid^="pixel-"]').forEach((node) => {
           node.setAttribute('class', 'automata-grid-element');
         })
@@ -41,15 +49,16 @@ export default function Home() {
         return;
       }
 
-      if (base64InitialState) {
-        const asJS = JSON.parse(atob(base64InitialState));
+      if (pattern) {
+        const asJS = JSON.parse(atob(pattern));
         asJS.forEach((item: number[]) => {
           const pixel = document.querySelector(`[data-testid="pixel-x${item[0]}-y${[1]}"]`);
           if (pixel) {
             pixel.setAttribute('class', 'automata-grid-element automata-grid-element-alive')
           }
         })
-        setInitialGrid(JSON.parse(atob(base64InitialState)));
+        setInitialGrid(asJS);
+        setIsPlaying(Boolean(withAutoplay))
         setLoading(false);
       }
     
@@ -119,11 +128,11 @@ export default function Home() {
       </Head>
       <main className='main'>
         <div>
-          <button onClick={togglePlaying} disabled={playing}>Play</button>
-          <button onClick={fullReset}>Clear</button>
-          <button onClick={() => {
-            copyLink(`${window.location.protocol}//${window.location.host}?pattern=${btoa(JSON.stringify(initialGrid)).toString()}`)
-          }}>Copy share link</button>
+          <div className='button-group'>
+            <button onClick={togglePlaying} disabled={playing}>Play automata</button>
+            <button onClick={fullReset}>Clear</button>
+          </div>
+          <p>Click on red box to set initial pixels.</p>
         </div>
         <div className='grid-container'>
           {playing && !loading && (
@@ -162,6 +171,22 @@ export default function Home() {
             />
           )}
         </div>
+        {!loading && <div className='shareables'>
+          <div className='button-group button-share'>
+              <button onClick={handleSendAutoPlay} style={{
+                backgroundColor: sendWithAutoPlay ? 'green' : 'red',
+                border: 0
+              }}>Share with autoplay</button>
+              <button onClick={() => {
+                copyLink(`${window.location.protocol}//${window.location.host}?withAutoplay=${sendWithAutoPlay}&pattern=${btoa(JSON.stringify(initialGrid)).toString()}`)
+              }}>Copy share link</button>
+          </div>
+        </div>}
+        {!loading && <div className='footer'>
+          <a href="https://craigwh.it" target='_blank'>Made by craigwh.it</a>
+          <a href="https://github.com/craigwh10/shareable-automata" target='_blank'>Repository</a>
+          <a href="https://www.npmjs.com/package/cellular-automata-react" target='_blank'>NPM Package</a>
+        </div>}
       </main>
     </>
   )
