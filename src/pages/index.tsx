@@ -1,7 +1,5 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react';
-import { initializeApp } from "firebase/app";
-import { getAnalytics, logEvent } from "firebase/analytics";
 
 import { AutomataGrid, conwaysGameOfLifePreset } from 'cellular-automata-react'
 
@@ -73,32 +71,6 @@ export default function Home() {
 
   useEffect(() => {
     reset();
-
-    try {
-      if (!process.env?.NEXT_PUBLIC_AN_APIKEY) {
-        return;
-      }
-  
-      const firebaseConfig = {
-        apiKey: process.env.NEXT_PUBLIC_AN_APIKEY,
-        authDomain: "shareable-automata.firebaseapp.com",
-        projectId: "shareable-automata",
-        storageBucket: "shareable-automata.appspot.com",
-        messagingSenderId: process.env.NEXT_PUBLIC_AN_MSID,
-        appId: process.env.NEXT_PUBLIC_AN_APPID,
-        measurementId: process.env.NEXT_PUBLIC_AN_MID
-      };
-    
-    
-      if (typeof window !== 'undefined') {
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-  
-        logEvent(analytics, 'entry')
-        }
-    } catch (err) {
-      console.error(err);
-    }
   }, [])
 
   let handlersAndNode: any[][] = [];
