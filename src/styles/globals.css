@@ -67,6 +67,10 @@ p {
   padding: 1em;
 }
 
+.button-group.button-share button:nth-child(1) {
+  color: white;
+}
+
 .button-group.button-share button {
   margin-bottom: 0;
 }
