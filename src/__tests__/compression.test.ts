@@ -1,4 +1,4 @@
-import { compression } from "./compression";
+import { compression } from "../pages/compression";
 
 describe('compression flow', () => {
     test('full flow - simple', () => {

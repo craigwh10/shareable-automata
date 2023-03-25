@@ -1,6 +1,6 @@
 import { render, fireEvent, waitFor, screen, cleanup} from '@testing-library/react';
-import Home from '.';
-import { compression } from './compression';
+import Home from '../pages/index';
+import { compression } from '../pages/compression';
 import React from 'react';
 
 describe('flow', () => {
