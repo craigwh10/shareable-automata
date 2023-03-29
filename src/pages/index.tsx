@@ -18,7 +18,7 @@ export default function Home() {
   }
 
   if (loading) {
-    return <p>Loading</p>
+    return <></>
   }
 
   return (
