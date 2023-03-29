@@ -44,7 +44,7 @@ export default function Home() {
           <div className="controls">
             <div className='button-group'>
               <button onClick={togglePlaying} disabled={playing || !state.length}>Play automata</button>
-              <button onClick={fullReset} disabled={!state.length}>Reset</button>
+              <button onClick={fullReset} disabled={!state.length}>Start over</button>
             </div>
             <div className='shareables'>
               <div className='button-group button-share'>
