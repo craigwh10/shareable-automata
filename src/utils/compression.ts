@@ -17,8 +17,6 @@ const compression = {
 
     const inflatedString = new TextDecoder().decode(inflatedUint8Array);
 
-    console.log(inflatedString);
-
     const inflatedData = JSON.parse(inflatedString) as number[][];
 
 
@@ -26,7 +24,11 @@ const compression = {
   },
 };
 
-export const sanitize = (data: string) => {
+export const sanitize = (data: string | null | undefined) => {
+  if (typeof data !== 'string') {
+    return [];
+  }
+
   // regex shows whitelisted values, [ , ] digit
   if (!data.search(/^[,\[\]\d]+$/g)) {
     return [];
