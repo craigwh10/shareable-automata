@@ -1,33 +1,13 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react';
+import { ReactElement, useContext, useEffect, useState } from 'react';
 
-import { AutomataGrid, conwaysGameOfLifePreset } from 'cellular-automata-react'
-
+import { AutomataGrid } from '@/modules/AutomataGrid';
 import { compression } from '../utils/compression';
+import { useGrid, useShareGridLink } from '@/context/GridContext';
 
 export default function Home() {
-  const [initialGrid, setInitialGrid] = useState<Array<Array<number>>>([]);
-  const [loading, setLoading] = useState(true);
-  const [playing, setIsPlaying] = useState(false);
-  const [sendWithAutoPlay, setSendWithAutoPlay] = useState(true);
-
-  const togglePlaying = () => {
-    setIsPlaying((prev) => !prev);
-  }
-
-  const copyLink = (link: string) => {
-    navigator.clipboard.writeText(link).then(() => {
-      alert('link copied to clip board.')
-    });
-  }
-  
-
-
-  const hasCoordinate = (coordArray: number[]) => (coord: number[]) => {
-    const firstEqual = coord[0] === coordArray[0];
-    const secondEqual = coord[1] === coordArray[1];
-    return firstEqual && secondEqual;
-  }
+  const { togglePlaying, loading, playing, state } = useGrid()
+  const { link, setSendWithAutoPlay, sendWithAutoPlay } = useShareGridLink();
 
   const fullReset = () => {
     window.location.href =  window.location.href.split("?")[0];
@@ -37,90 +17,9 @@ export default function Home() {
     setSendWithAutoPlay((autoplay) => !autoplay);
   }
 
-  const reset = () => {
-    if (typeof window !== 'undefined') {
-      const params = new URL(document.location.href).searchParams;
-      const pattern = params.get("pattern");
-      const withAutoplay = params.get("withAutoplay");
-
-      if (!pattern) {
-        document.querySelectorAll('[data-testid^="pixel-"]').forEach((node) => {
-          node.setAttribute('class', 'automata-grid-element');
-        })
-        setIsPlaying(false);
-        setInitialGrid([]);
-        setLoading(false);
-        return;
-      }
-
-      if (pattern) {
-        const asJS = compression.inflateString(pattern)
-        asJS.forEach((item: number[]) => {
-          const pixel = document.querySelector(`[data-testid="pixel-x${item[0]}-y${[1]}"]`);
-          if (pixel) {
-            pixel.setAttribute('class', 'automata-grid-element automata-grid-element-alive')
-          }
-        })
-        setInitialGrid(asJS);
-        setIsPlaying(Boolean(withAutoplay))
-        setLoading(false);
-      }
-    
-    }
+  if (loading) {
+    return <p>Loading</p>
   }
-
-  useEffect(() => {
-    reset();
-  }, [])
-
-  let handlersAndNode: any[][] = [];
-
-  useEffect(() => {
-    if (!loading) {
-      document.querySelectorAll('[data-testid^="pixel-"]').forEach((node) => {
-        const clickPixelHandler = () => {
-            const fullTestId = node.attributes.item(0)?.value;
-      
-            const coordinates = fullTestId?.split('-') as string[];
-            const xN = coordinates[1];
-            const yN = coordinates[2];
-            const coordArray = [Number(xN.replace('x', '')), Number(yN.replace('y', ''))];
-      
-            setInitialGrid((prevState) => {
-                if (!prevState.find(hasCoordinate(coordArray))) {
-                  node.setAttribute('class', 'automata-grid-element automata-grid-element-alive');
-                  return [
-                    ...prevState,
-                    coordArray
-                  ]
-              }
-      
-              return prevState;
-            }) // setInitialGrid
-        }
-
-        // necessary - can't use window, handlers have scope.
-        // node is scope for clickPixel ref
-        handlersAndNode.push([node, clickPixelHandler]);
-
-        node.addEventListener('click', clickPixelHandler) // click
-       }) // query
-    }
-
-    return () => {
-      handlersAndNode.forEach((handler) => {
-        handler[0].removeEventListener('click', handler[1]);
-      })
-    }
-  }, [loading, playing])
-
-  useEffect(() => {
-    if (playing) {
-      handlersAndNode.forEach((handler) => {
-        handler[0].removeEventListener('click', handler[1]);
-      })
-    }
-  }, [playing])
 
   return (
     <>
@@ -131,73 +30,46 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className='main'>
-        <div>
-          <div className='button-group'>
-            <button onClick={togglePlaying} disabled={playing}>Play automata</button>
-            <button onClick={fullReset}>Clear</button>
-          </div>
-          <p>{playing ? 'Click clear to start over and make your own' : 'Click anywhere on red box to make pixels alive.'}</p>
-          <p>{playing ? '' : 'Then you can either share or play an automata'}</p>
+        <div style={{margin: 'auto'}}>
+          <p>{playing ? 'Click clear to start over and make your own' : 'Click anywhere on box to make pixels alive.'}</p>
+          <p>You can either play the simulation for yourself, or send it to someone else.</p>
         </div>
         <div className='grid-container'>
-          {playing && !loading && (
+          <div className='grid-container__inner'>
             <AutomataGrid
-              key={'grid-that-runs'}
-              pixelsActive={initialGrid as Array<[number, number]>}
-              iterationTimeInMs={1000}
-              rules={conwaysGameOfLifePreset}
-              size={{
-                xWidth: 16,
-                yWidth: 10
-              }}
-              pixelStyles={{
-                width: '30px',
-                height: '30px',
-                backgroundColor: 'inherit'
-              } as any} 
+              initialGrid={state}
+              playing={playing}
             />
-          )}
-
-          {!playing && !loading && (
-            <AutomataGrid
-              key={'canvas-grid'}
-              pixelsActive={initialGrid as Array<[number, number]>}
-              iterationTimeInMs={10000000000}
-              rules={conwaysGameOfLifePreset}
-              size={{
-                xWidth: 16,
-                yWidth: 10
-              }}
-              pixelStyles={{
-                width: '30px',
-                height: '30px',
-                backgroundColor: 'inherit'
-              } as any} 
-            />
-          )}
-        </div>
-        {!loading && <div className='shareables'>
-          <div className='button-group button-share'>
-              <button onClick={handleSendAutoPlay} style={{
-                backgroundColor: sendWithAutoPlay ? 'green' : 'red',
-                border: 0
-              }}>Toggle share with autoplay</button>
-              <button data-testid="copy-link-btn" onClick={() => {
-                copyLink(
-                  `${window.location.protocol}//${window.location.host}?withAutoplay=${
-                    sendWithAutoPlay
-                  }&pattern=${
-                    compression.deflateString(initialGrid)
-                  }`)
-              }}>Copy share link</button>
           </div>
-          <p>Clicking &quot;copy share link&quot; gives you a link you can paste and send to friends.</p>
-        </div>}
-        {!loading && <div className='footer'>
+          <div className="controls">
+            <div className='button-group'>
+              <button onClick={togglePlaying} disabled={playing || !state.length}>Play automata</button>
+              <button onClick={fullReset} disabled={!state.length}>Reset</button>
+            </div>
+            <div className='shareables'>
+              <div className='button-group button-share'>
+                  <button onClick={handleSendAutoPlay} style={{
+                    backgroundColor: sendWithAutoPlay ? 'green' : 'red',
+                    border: 0,
+                    width: 150,
+                  }}>Autoplay ({sendWithAutoPlay ? 'ON' : 'OFF'})</button>
+                  <input data-testid="copy-link-btn" readOnly value={link} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className='footer'>
           <a href="https://craigwh.it" target='_blank'>Made by craigwh.it</a>
           <a href="https://github.com/craigwh10/shareable-automata" target='_blank'>Repository</a>
           <a href="https://www.npmjs.com/package/cellular-automata-react" target='_blank'>NPM Package</a>
-        </div>}
+        </div>
+        <div style={{margin: 'auto', color: 'white', paddingTop: '2em'}}>
+          Examples:
+          <ul>
+            <li><a style={{color: 'aqua'}} href="https://shareable-automata.vercel.app/?withAutoplay=true&pattern=eJxFjssNwDAIQxfiEEObzyxR9l-jxEbqxU9YGLx3WBzbcMJtpT4GJF6DJ4awBLSiG9plMAL89s12jVMI7Q7r9DrPSQd10p_cuZrX2AYKq4yaVYf6qQaoz-d8XUEyCw">Smiley face</a></li>
+            <li><a style={{color: 'aqua'}} href="https://en.wikipedia.org/wiki/Gun_(cellular_automaton)" target="_blank">"Glider gun"</a></li>
+          </ul>
+        </div>
       </main>
     </>
   )
