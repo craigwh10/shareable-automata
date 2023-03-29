@@ -67,7 +67,7 @@ export default function Home() {
           Examples:
           <ul>
             <li><a style={{color: 'aqua'}} href="https://shareable-automata.vercel.app/?withAutoplay=true&pattern=eJxFjssNwDAIQxfiEEObzyxR9l-jxEbqxU9YGLx3WBzbcMJtpT4GJF6DJ4awBLSiG9plMAL89s12jVMI7Q7r9DrPSQd10p_cuZrX2AYKq4yaVYf6qQaoz-d8XUEyCw">Smiley face</a></li>
-            <li><a style={{color: 'aqua'}} href="https://en.wikipedia.org/wiki/Gun_(cellular_automaton)" target="_blank">"Glider gun"</a></li>
+            <li><a style={{color: 'aqua'}} href="https://en.wikipedia.org/wiki/Gun_(cellular_automaton)" target="_blank">&quot;Glider gun&quot;</a></li>
           </ul>
         </div>
       </main>
