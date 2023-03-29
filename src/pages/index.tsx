@@ -1,9 +1,7 @@
 import Head from 'next/head'
-import { ReactElement, useContext, useEffect, useState } from 'react';
 
-import { AutomataGrid } from '@/modules/AutomataGrid';
-import { compression } from '../utils/compression';
-import { useGrid, useShareGridLink } from '@/context/GridContext';
+import { AutomataGrid } from '../modules/AutomataGrid';
+import { useGrid, useShareGridLink } from '../context/GridContext';
 
 export default function Home() {
   const { togglePlaying, loading, playing, state } = useGrid()
@@ -31,7 +29,7 @@ export default function Home() {
       </Head>
       <main className='main'>
         <div style={{margin: 'auto'}}>
-          <p>{playing ? 'Click clear to start over and make your own' : 'Click anywhere on box to make pixels alive.'}</p>
+          <p>{playing ? 'Click start over to clear the grid' : 'Click anywhere on box to make pixels alive.'}</p>
           <p>You can either play the simulation for yourself, or send it to someone else.</p>
         </div>
         <div className='grid-container'>
@@ -53,7 +51,7 @@ export default function Home() {
                     border: 0,
                     width: 150,
                   }}>Autoplay ({sendWithAutoPlay ? 'ON' : 'OFF'})</button>
-                  <input data-testid="copy-link-btn" readOnly value={link} />
+                  <input data-testid="copy-link" readOnly value={link} />
               </div>
             </div>
           </div>

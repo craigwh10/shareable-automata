@@ -1,4 +1,4 @@
-import { compression } from "@/utils/compression";
+import { compression } from "../utils/compression";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type Grid = Array<Array<number>>;
@@ -133,7 +133,7 @@ export function useShareGridLink () {
           }&pattern=${
             compression.deflateString(state)
           }`)
-    }, [state])
+    }, [state, sendWithAutoPlay])
 
     return {link, setSendWithAutoPlay, sendWithAutoPlay};
 }

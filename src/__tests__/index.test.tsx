@@ -2,21 +2,16 @@ import { render, fireEvent, waitFor, screen, cleanup} from '@testing-library/rea
 import Home from '../pages/index';
 import { compression } from '../utils/compression';
 import React from 'react';
+import { GridContextProvider } from '../context/GridContext';
 
 describe('general flow', () => {
-    Object.assign(navigator, {
-        clipboard: {
-          writeText: () => {},
-        },
-    });
-
     beforeEach(() => {
         jest.resetAllMocks();
         cleanup();
 
-        jest.spyOn(navigator.clipboard, "writeText").mockResolvedValue();
-        jest.spyOn(window, 'alert').mockImplementation(() => {});
-        render(<Home />);
+        render(<GridContextProvider>
+            <Home />
+        </GridContextProvider>);
     })
 
     it('should return copyable link when clicking 3 pixels and copy link button', async () => {
@@ -34,13 +29,7 @@ describe('general flow', () => {
             fireEvent.click(pixel);
         })
 
-        const button = screen.getByTestId('copy-link-btn');
-
-        fireEvent.click(button);
-
-        await waitFor(() => {
-            expect(navigator.clipboard.writeText).toHaveBeenCalledWith(link(data));
-        })
+        expect(screen.getByTestId('copy-link')).toHaveTextContent(link(data));
     })
 
     it('should run a previously errored case', async () => {
@@ -58,13 +47,7 @@ describe('general flow', () => {
             fireEvent.click(pixel);
         })
 
-        const button = screen.getByTestId('copy-link-btn');
-
-        fireEvent.click(button);
-
-        await waitFor(() => {
-            expect(navigator.clipboard.writeText).toHaveBeenCalledWith(link(data));
-        })
+        expect(screen.getByTestId('copy-link')).toHaveTextContent(link(data));
     })
 
     it('should return copyble link when clicking many pixels and copy link button', async () => {
@@ -95,13 +78,7 @@ describe('general flow', () => {
             fireEvent.click(pixel);
         })
 
-        const button = screen.getByTestId('copy-link-btn');
-
-        fireEvent.click(button);
-
-        await waitFor(() => {
-            expect(navigator.clipboard.writeText).toHaveBeenCalledWith(link(data));
-        })
+        expect(screen.getByTestId('copy-link')).toHaveTextContent(link(data));
     })
 })
 

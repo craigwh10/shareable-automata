@@ -17,10 +17,21 @@ const compression = {
 
     const inflatedString = new TextDecoder().decode(inflatedUint8Array);
 
+    console.log(inflatedString);
+
     const inflatedData = JSON.parse(inflatedString) as number[][];
+
 
     return inflatedData;
   },
 };
+
+export const sanitize = (data: string) => {
+  // regex shows whitelisted values, [ , ] digit
+  if (!data.search(/^[,\[\]\d]+$/g)) {
+    return [];
+  }
+  return data;
+}
 
 export { compression };
