@@ -11,19 +11,25 @@ const compression = {
     return base64url.encode(buffer);
   },
   inflateString: (string: string) => {
-    const gzipped = base64url.toBuffer(string);
+    try {
+      const gzipped = base64url.toBuffer(string);
 
-    const inflatedUint8Array = pako.inflate(gzipped);
-
-    const inflatedString = new TextDecoder().decode(inflatedUint8Array);
-
-    const inflatedData = JSON.parse(inflatedString) as number[][];
-
-
-    return inflatedData;
+      const inflatedUint8Array = pako.inflate(gzipped);
+  
+      const inflatedString = new TextDecoder().decode(inflatedUint8Array);
+  
+      const inflatedData = JSON.parse(inflatedString) as number[][];
+  
+      return inflatedData;
+    } catch (err) {
+      return [[]];
+    }
   },
 };
 
+/**
+ * @deprecated
+ */
 export const sanitize = (data: string | null | undefined) => {
   if (typeof data !== 'string') {
     return [];

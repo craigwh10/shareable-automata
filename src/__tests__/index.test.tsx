@@ -14,8 +14,8 @@ describe('general flow', () => {
         </GridContextProvider>);
     })
 
-    it('should return copyable link when clicking 3 pixels and copy link button', async () => {
-        const data = [[1,1], [2,1], [3,4]];
+    it('should return copyable link when clicking 3 pixels and copy link button', () => {
+        const data = [[1,1], [3,2], [1,2]];
 
         const testIds = data.map((item) => {
             return `pixel-x${item[0]}-y${item[1]}`;
@@ -29,7 +29,7 @@ describe('general flow', () => {
             fireEvent.click(pixel);
         })
 
-        expect(screen.getByTestId('copy-link')).toHaveTextContent(link(data));
+        expect(screen.getByTestId('copy-link')).toHaveValue(link(data));
     })
 
     it('should run a previously errored case', async () => {
@@ -47,7 +47,7 @@ describe('general flow', () => {
             fireEvent.click(pixel);
         })
 
-        expect(screen.getByTestId('copy-link')).toHaveTextContent(link(data));
+        expect(screen.getByTestId('copy-link')).toHaveValue(link(data));
     })
 
     it('should return copyble link when clicking many pixels and copy link button', async () => {
@@ -78,7 +78,7 @@ describe('general flow', () => {
             fireEvent.click(pixel);
         })
 
-        expect(screen.getByTestId('copy-link')).toHaveTextContent(link(data));
+        expect(screen.getByTestId('copy-link')).toHaveValue(link(data));
     })
 })
 
